@@ -1,11 +1,9 @@
 console.log('hello world')
-<<<<<<< HEAD
 import avatar from './avatar.png'
-
+import markdown from '../markdown.md'
 Image.src = avatar;
 console.log(Image.src)
-=======
+console.log(markdown)
 fetch('/api/article').then((res)=>{
     return Promise.resolve(res)
 }).then(res=>console.log(res))
->>>>>>> 8c4c3a1 (feat: 一些插件使用)

@@ -9,17 +9,6 @@ module.exports = smp.wrap({
     entry:{
         index:'./src/index.js'
     },
-<<<<<<< HEAD
-    resolve:{
-        alias:{
-            '@':paths.appSrc
-        }
-    },
-    module:{
-        rules:[
-            {
-                test:/\.(png|jpg|jpeg)$/,
-=======
     module:{
         rules:[
             {
@@ -27,8 +16,18 @@ module.exports = smp.wrap({
                 include:[
                     paths.resolveApp('src'),
                 ],
->>>>>>> 8c4c3a1 (feat: 一些插件使用)
                 type:'asset/resource'
+            },
+            {
+                test:/\.md$/,
+                use:[
+                    {
+                        loader:paths.resolveApp('loaders')+'/md-loader',
+                        options:{
+                            headerIds:false
+                        }
+                    }
+                ]
             }
         ]
     },
