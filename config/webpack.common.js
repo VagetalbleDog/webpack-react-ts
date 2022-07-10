@@ -5,6 +5,7 @@ const progressBarWebpackPlugin = require("progress-bar-webpack-plugin");
 const SpeedMeasurePlugin = require("speed-measure-webpack-plugin")
 const smp = new SpeedMeasurePlugin();
 const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer");
+const BundleSizePlugin = require(paths.resolveApp('plugins')+'/bundleSizePlugin')
 module.exports = smp.wrap({
     entry:{
         index:'./src/index.js'
@@ -26,7 +27,13 @@ module.exports = smp.wrap({
                         options:{
                             headerIds:false
                         }
-                    }
+                    },
+                    {
+                        loader:paths.resolveApp('loaders') + '/html-color-loader',
+                        options:{
+                            text:'world'
+                        }
+                    },
                 ]
             }
         ]
@@ -38,6 +45,7 @@ module.exports = smp.wrap({
         new progressBarWebpackPlugin({
             format:` :msg [:bar] ${chalk.green.bold(':percent')} (:elapsed)`
         }),
-        new BundleAnalyzerPlugin()
+        new BundleAnalyzerPlugin(),
+        new BundleSizePlugin({limit:3})
     ]
 })
