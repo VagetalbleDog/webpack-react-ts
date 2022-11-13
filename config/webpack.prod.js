@@ -1,12 +1,10 @@
-const { merge } = require("webpack-merge");
-const common = require("./webpack.common");
-const { resolveApp } = require("./paths");
+const {merge} = require('webpack-merge');
+const common = require('./webpack.common.js');
+
 module.exports = merge(common, {
+  mode: 'production',
+  devtool: 'source-map',
   output: {
-    filename: "[name].[contenthash].bundle.js",
-    path: resolveApp("dist"),
-    clean: true,
+    publicPath: '/', 
   },
-  mode: "production",
-  devtool: "eval-cheap-module-source-map",
 });

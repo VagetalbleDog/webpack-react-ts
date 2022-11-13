@@ -1,23 +1,11 @@
-const { merge } = require("webpack-merge");
-const common = require("./webpack.common");
-const { resolveApp } = require("./paths");
-const path = require('path')
+const {merge} = require('webpack-merge');
+const common = require('./webpack.common.js');
+
 module.exports = merge(common, {
-  devServer:{
-      static:{
-          directory:path.join(__dirname,'dist')
-      },
-      port:8888,
-      hot:true,
-      proxy:{
-          '/api':'http://www.zhuwenfu.top'
-      }
+  mode: 'development',
+  devtool: 'inline-source-map',
+  devServer: {
+    open: true,
+    hot: true,
   },
-  output: {
-    filename: "[name].bundle.js",
-    path: resolveApp("dist"),
-    clean: false,
-  },
-  mode: "development",
-  devtool: "eval-cheap-module-source-map",
 });

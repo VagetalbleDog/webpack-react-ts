@@ -1,51 +1,60 @@
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const paths = require('./paths')
-const chalk = require('chalk');
-const progressBarWebpackPlugin = require("progress-bar-webpack-plugin");
-const SpeedMeasurePlugin = require("speed-measure-webpack-plugin")
-const smp = new SpeedMeasurePlugin();
-const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer");
-const BundleSizePlugin = require(paths.resolveApp('plugins')+'/bundleSizePlugin')
-module.exports = smp.wrap({
-    entry:{
-        index:'./src/index.js'
+const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const devMode = process.env.NODE_ENV !== 'production';
+const webpack = require("webpack");
+module.exports = {
+  entry: {
+    app: path.resolve(__dirname, '../src/index.tsx'),
+  },
+  output: {
+    filename: devMode ? '[name].js' : '[name].[hash].js',
+    path: path.resolve(__dirname, '../dist'),
+    publicPath: '/',
+  },
+  resolve:{
+    extensions:['.js','.jsx','.ts','.tsx'],
+    alias:{
+      '@':path.resolve(__dirname,'../src'),
+    }
+  },
+  module: {
+    rules: [
+      {
+        test: /\.html$/,
+        exclude: /[\\/]node_modules[\\/]/,
+        loader: 'html-loader',
+        options: {
+          minimize: !devMode,
+        },
+      },
+      {
+        test:/(\.js(x?))|(\.ts(x?))$/,
+        exclude:/[\\/]node_modules[\\/]/,
+        loader:'babel-loader',
+      }
+    ],
+  },
+  plugins: [
+    new CleanWebpackPlugin(),
+    new HtmlWebpackPlugin({
+      title: 'simple-scaffold',
+      template: path.resolve(__dirname, '../src/index.html'),
+      filename: 'index.html',
+    }),
+    new webpack.ProvidePlugin({
+      React: 'react',
+    }),
+  ],
+  optimization: {
+    splitChunks: {
+      cacheGroups: {
+        commons: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendors',
+          chunks: 'all'
+        },
+      },
     },
-    module:{
-        rules:[
-            {
-                test: /\.(png|svg|ipg|jpeg|gif)$/i,
-                include:[
-                    paths.resolveApp('src'),
-                ],
-                type:'asset/resource'
-            },
-            {
-                test:/\.md$/,
-                use:[
-                    {
-                        loader:paths.resolveApp('loaders')+'/md-loader',
-                        options:{
-                            headerIds:false
-                        }
-                    },
-                    {
-                        loader:paths.resolveApp('loaders') + '/html-color-loader',
-                        options:{
-                            text:'world'
-                        }
-                    },
-                ]
-            }
-        ]
-    },
-    plugins:[
-        new HtmlWebpackPlugin({
-            title:'webpack'
-        }),
-        new progressBarWebpackPlugin({
-            format:` :msg [:bar] ${chalk.green.bold(':percent')} (:elapsed)`
-        }),
-        new BundleAnalyzerPlugin(),
-        new BundleSizePlugin({limit:3})
-    ]
-})
+  },
+}
